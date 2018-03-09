@@ -19,8 +19,7 @@ class BashColors:
 class Output:
     """ Output and debug related macros. """
 
-    def __init__(self,
-                 debugFileName=None):
+    def __init__(self, debugFileName=None):
         """ Constructor... """
         self._debugFile = None
         if debugFileName:
@@ -38,40 +37,35 @@ class Output:
         if self._debugFile:
             self._debugFile.close()
 
-    def print(self, message, ending='\n'):
-        """ Print in debug file and on stdout without formatting. """
-        if self._debugFile:
-            self._debugFile.write(message + ending)
-        sys.stdout.write(message + ending)
-
-    def printok(self, message, ending='\n'):
-        """ Print in debug file and on stdout with ok formatting. """
-        if self._debugFile:
-            self._debugFile.write(message + ending)
-        sys.stdout.write(self._ok + message + ending + BashColors.ENDC)
-
-    def printwarn(self, message, ending='\n'):
-        """ Print in debug file and on stdout with warning formatting. """
-        if self._debugFile:
-            self._debugFile.write(message + ending)
-        sys.stdout.write(self._warn + message + ending + BashColors.ENDC)
-
-    def printerr(self, message, ending='\n'):
-        """ Print in debug file and on stdout with error formatting. """
-        if self._debugFile:
-            self._debugFile.write(message + ending)
-        sys.stdout.write(self._err + message + ending + BashColors.ENDC)
-
-    def printcrit(self, message, ending='\n'):
-        """ Print in debug file and on stdout with critical error formatting. """
-        if self._debugFile:
-            self._debugFile.write(message + ending)
-        sys.stdout.write(self._crit + message + ending + BashColors.ENDC)
+    def print(self, message, ending='\n', formatting=''):
+        """ Print in debug file and on stdout with defined formatting. """
+        self.debug(message, ending)
+        sys.stdout.write(formatting + message + ending + BashColors.ENDC)
 
     def debug(self, message, ending='\n'):
         """ Print in debug file only. """
         if self._debugFile:
             self._debugFile.write(message + ending)
+
+    def printok(self, message, ending='\n'):
+        """ Print in debug file and on stdout with ok formatting. """
+        self.debug(message, ending)
+        self.print(message, ending, self._ok)
+
+    def printwarn(self, message, ending='\n'):
+        """ Print in debug file and on stdout with warning formatting. """
+        self.debug(message, ending)
+        self.print(message, ending, self._warn)
+
+    def printerr(self, message, ending='\n'):
+        """ Print in debug file and on stdout with error formatting. """
+        self.debug(message, ending)
+        self.print(message, ending, self._err)
+
+    def printcrit(self, message, ending='\n'):
+        """ Print in debug file and on stdout with critical error formatting. """
+        self.debug(message, ending)
+        self.print(message, ending, self._crit)
 
     def setOkColor(self, color):
         """ Sets the ok color. """
@@ -88,6 +82,26 @@ class Output:
     def setCritColor(self, color):
         """ Sets the critical error color. """
         self._crit = color
+
+def myprint(message, ending='\n', formatting=''):
+    """ Print on stdout with defined formatting. """
+    sys.stdout.write(formatting + message + ending + BashColors.ENDC)
+
+def printok(message, ending='\n'):
+    """ Print on stdout with ok formatting. """
+    myprint(message, ending, BashColors.OKGREEN)
+
+def printwarn(message, ending='\n'):
+    """ Print on stdout with warning formatting. """
+    myprint(message, ending, BashColors.WARNINGYELLOW)
+
+def printerr(message, ending='\n'):
+    """ Print on stdout with error formatting. """
+    myprint(message, ending, BashColors.FAILRED)
+
+def printcrit(message, ending='\n'):
+    """ Print on stdout with critical error formatting. """
+    myprint(message, ending, BashColors.FAILRED + BashColors.BOLD + BashColors.UNDERL)
 
 def offerChoice(message='', default=None, forceAnswer=False, color=''):
     """
